@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>免費名片辨識器</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">100% 免費・瀏覽器本機 OCR</p>
+        <h1>名片掃描 → Excel</h1>
+        <p class="sub">上傳多張名片，辨識中／英／韓文字，人工確認後匯出 Excel。</p>
+      </div>
+      <div class="privacy">🔒 圖片不會上傳到本網站伺服器</div>
+    </section>
+
+    <section class="panel">
+      <label class="dropzone" id="dropzone">
+        <input id="fileInput" type="file" accept="image/*" multiple />
+        <strong>點擊或拖曳名片圖片到這裡</strong>
+        <span>支援 JPG、PNG、WEBP，可一次選多張</span>
+      </label>
+
+      <div class="controls">
+        <label>
+          OCR 語言
+          <select id="language">
+            <option value="chi_tra+eng+kor">繁中＋英文＋韓文</option>
+            <option value="chi_tra+eng">繁中＋英文</option>
+            <option value="kor+eng">韓文＋英文</option>
+            <option value="eng">英文</option>
+          </select>
+        </label>
+        <button id="scanBtn" class="primary" disabled>開始辨識</button>
+        <button id="exportBtn" disabled>匯出 Excel</button>
+        <button id="clearBtn" disabled>清空</button>
+      </div>
+
+      <div id="progressWrap" class="progress-wrap hidden">
+        <div class="progress-head">
+          <span id="progressText">準備中</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress"><div id="progressBar"></div></div>
+      </div>
+
+      <div id="previewList" class="preview-list"></div>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="table-head">
+        <div>
+          <h2>辨識結果</h2>
+          <p>OCR 不會永遠乖巧，匯出前請快速校對。</p>
+        </div>
+        <span id="countBadge" class="badge">0 筆</span>
+      </div>
+
+      <div class="table-wrap">
+        <table id="resultTable">
+          <thead>
+            <tr>
+              <th>檔名</th>
+              <th>姓名</th>
+              <th>公司</th>
+              <th>部門</th>
+              <th>職稱</th>
+              <th>手機</th>
+              <th>電話</th>
+              <th>Email</th>
+              <th>網站</th>
+              <th>地址</th>
+              <th>原始辨識文字</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="resultBody">
+            <tr class="empty-row"><td colspan="12">尚未辨識名片</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      第一次辨識某個語言時，瀏覽器需要下載免費 OCR 語言模型，可能稍等一會兒。
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
