@@ -130,3 +130,112 @@ td:last-child .delete-row {
   width: 100%;
   margin-bottom: 6px;
 }
+
+
+/* 小貓掌鼠標 */
+@media (pointer: fine) {
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  label {
+    cursor: none !important;
+  }
+
+  .cat-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 34px;
+    height: 34px;
+    pointer-events: none;
+    z-index: 99999;
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      rotate(-18deg)
+      scale(0.82);
+    transition:
+      opacity 0.18s ease,
+      transform 0.16s ease;
+    filter: drop-shadow(0 3px 3px rgba(70, 40, 35, 0.18));
+  }
+
+  .cat-cursor.visible {
+    opacity: 1;
+  }
+
+  .cat-cursor.active {
+    transform:
+      translate(-50%, -50%)
+      rotate(0deg)
+      scale(1.15);
+  }
+
+  .cat-cursor.clicking {
+    transform:
+      translate(-50%, -50%)
+      rotate(-8deg)
+      scale(0.72);
+  }
+
+  .cat-cursor .toe,
+  .cat-cursor .paw-pad {
+    position: absolute;
+    display: block;
+    background: #ff8fa3;
+  }
+
+  .cat-cursor .toe {
+    width: 8px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .cat-cursor .toe-1 {
+    top: 5px;
+    left: 4px;
+    transform: rotate(-24deg);
+  }
+
+  .cat-cursor .toe-2 {
+    top: 1px;
+    left: 12px;
+    transform: rotate(-8deg);
+  }
+
+  .cat-cursor .toe-3 {
+    top: 2px;
+    left: 21px;
+    transform: rotate(10deg);
+  }
+
+  .cat-cursor .toe-4 {
+    top: 8px;
+    left: 27px;
+    transform: rotate(28deg);
+  }
+
+  .cat-cursor .paw-pad {
+    width: 22px;
+    height: 18px;
+    left: 7px;
+    top: 14px;
+    border-radius: 55% 55% 48% 48%;
+    transform: rotate(-2deg);
+  }
+
+  .cat-cursor.active .toe,
+  .cat-cursor.active .paw-pad {
+    background: #ff6685;
+  }
+}
+
+/* 手機和平板維持正常觸控，不顯示貓掌 */
+@media (pointer: coarse) {
+  .cat-cursor {
+    display: none;
+  }
+}
