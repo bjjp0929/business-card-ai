@@ -146,7 +146,7 @@ function parseBusinessCard(text, filename) {
 
   const titleKeywords = /(董事長|副董事長|執行長|總經理|副總|協理|經理|副理|主任|專員|秘書|顧問|工程師|設計師|代表|會長|理事|監事|chairman|ceo|president|director|manager|assistant|specialist|consultant|engineer|designer|대표이사|대표|회장|사장|이사|부장|차장|과장|대리|주임|사원|매니저|팀장)/i;
   const deptKeywords = /(部|處|室|組|中心|事業群|department|division|team|office|센터|본부|사업부|부서|팀)$/i;
-  const companyKeywords = /(股份有限公司|有限公司|公司|企業|集團|協會|基金會|大學|銀行|科技|國際|corp\.?|corporation|company|co\.?,?\s*ltd\.?|ltd\.?|inc\.?|llc|group|association|foundation|university|bank|주식회사|\(주\)|㈜|회사|재단|협회|대학교|은행)/i;
+  const companyKeywords = /(股份有限公司|有限公司|公司|企業|集團|協會|基金會|大學|銀行|科技|國際|實業|貿易|顧問|工作室|corp\.?|corporation|company|co\.?,?\s*ltd\.?|ltd\.?|inc\.?|llc|group|association|foundation|university|bank|studio|technology|tech|global|주식회사|\(주\)|㈜|회사|재단|협회|대학교|은행|테크|그룹)/i;
   const addressKeywords = /(台北|臺北|新北|桃園|台中|臺中|高雄|路|街|巷|弄|號|樓|區|市|縣|Taiwan|Taipei|Road|Rd\.|Street|St\.|Ave\.|Floor|F\.|대한민국|서울|부산|대구|인천|로|길|동|구|시)/i;
 
   const useful = lines.filter(line =>
@@ -157,25 +157,69 @@ function parseBusinessCard(text, filename) {
 
   const titleLine = useful.find(l => titleKeywords.test(l)) || "";
   const departmentLine = useful.find(l => deptKeywords.test(l) && l !== titleLine) || "";
-  const companyLine = useful.find(l => companyKeywords.test(l) && l !== titleLine && l !== departmentLine) || "";
-  const addressLine = useful.find(l => addressKeywords.test(l) && l.length >= 8 && l !== companyLine) || "";
+  const addressLine = useful.find(l => addressKeywords.test(l) && l.length >= 8) || "";
 
-  const excluded = new Set([titleLine, departmentLine, companyLine, addressLine].filter(Boolean));
-  const nameCandidates = useful.filter(l => {
-    if (excluded.has(l)) return false;
-    if (l.length > 35) return false;
-    if (/\d/.test(l)) return false;
-    if (companyKeywords.test(l) || titleKeywords.test(l) || deptKeywords.test(l)) return false;
-    return /[\p{L}]/u.test(l);
-  });
+  const excludedBase = new Set([titleLine, departmentLine, addressLine].filter(Boolean));
 
-  let name = "";
-  if (nameCandidates.length) {
-    name = [...nameCandidates].sort((a, b) => {
-      const aScore = (/^[\u4e00-\u9fff]{2,4}$/.test(a) ? 6 : 0) + (/^[가-힣]{2,5}$/.test(a) ? 6 : 0) + (a.split(" ").length <= 4 ? 2 : 0) - a.length / 30;
-      const bScore = (/^[\u4e00-\u9fff]{2,4}$/.test(b) ? 6 : 0) + (/^[가-힣]{2,5}$/.test(b) ? 6 : 0) + (b.split(" ").length <= 4 ? 2 : 0) - b.length / 30;
-      return bScore - aScore;
-    })[0];
+  function companyScore(line, index) {
+    if (!line || excludedBase.has(line)) return -999;
+    if (/\d/.test(line) && !companyKeywords.test(line)) return -8;
+
+    let score = 0;
+    if (companyKeywords.test(line)) score += 12;
+    if (/^[A-Z0-9&.,'’\- ]{3,}$/.test(line) && /[A-Z]/.test(line)) score += 5;
+    if (/[A-Za-z]/.test(line) && /[\u4e00-\u9fff가-힣]/.test(line)) score += 3;
+    if (line.length >= 5 && line.length <= 35) score += 2;
+    if (index <= 2) score += 2;
+    if (/^[\u4e00-\u9fff]{2,4}$/.test(line)) score -= 5;
+    if (/^[가-힣]{2,5}$/.test(line)) score -= 5;
+    if (/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3}$/.test(line)) score -= 4;
+    if (titleKeywords.test(line) || deptKeywords.test(line)) score -= 10;
+    return score;
+  }
+
+  let companyLine = "";
+  const companyCandidates = useful
+    .map((line, index) => ({ line, score: companyScore(line, index) }))
+    .sort((a, b) => b.score - a.score);
+
+  if (companyCandidates.length && companyCandidates[0].score >= 4) {
+    companyLine = companyCandidates[0].line;
+  }
+
+  const excludedForName = new Set([titleLine, departmentLine, addressLine, companyLine].filter(Boolean));
+
+  function nameScore(line) {
+    if (!line || excludedForName.has(line)) return -999;
+    if (companyKeywords.test(line) || titleKeywords.test(line) || deptKeywords.test(line)) return -999;
+    if (/\d/.test(line) || line.length > 30) return -999;
+
+    let score = 0;
+    if (/^[\u4e00-\u9fff]{2,4}$/.test(line)) score += 12;
+    if (/^[가-힣]{2,5}$/.test(line)) score += 12;
+    if (/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3}$/.test(line)) score += 9;
+    if (/^[A-Za-z][A-Za-z .'-]{2,24}$/.test(line) && line.split(/\s+/).length <= 4) score += 4;
+    if (/^[A-Z0-9&.,'’\- ]{3,}$/.test(line)) score -= 8;
+    if (line.length <= 12) score += 2;
+    return score;
+  }
+
+  const nameCandidates = useful
+    .map(line => ({ line, score: nameScore(line) }))
+    .filter(x => x.score > -999)
+    .sort((a, b) => b.score - a.score);
+
+  const name = nameCandidates.length && nameCandidates[0].score >= 4
+    ? nameCandidates[0].line
+    : "";
+
+  // If no company was found, choose the strongest remaining non-name line as fallback.
+  if (!companyLine) {
+    const fallback = useful
+      .filter(l => l !== name && !excludedBase.has(l))
+      .map((line, index) => ({ line, score: companyScore(line, index) }))
+      .sort((a, b) => b.score - a.score);
+    if (fallback.length && fallback[0].score >= 1) companyLine = fallback[0].line;
   }
 
   return {
@@ -199,6 +243,56 @@ const columns = [
   ["website", "網站"], ["address", "地址"], ["rawText", "原始辨識文字"]
 ];
 
+async function copyToClipboard(value, button) {
+  const text = value || "";
+  if (!text.trim()) {
+    flashCopyState(button, "空白");
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+    flashCopyState(button, "已複製");
+  } catch (error) {
+    const helper = document.createElement("textarea");
+    helper.value = text;
+    helper.style.position = "fixed";
+    helper.style.opacity = "0";
+    document.body.appendChild(helper);
+    helper.select();
+    document.execCommand("copy");
+    helper.remove();
+    flashCopyState(button, "已複製");
+  }
+}
+
+function flashCopyState(button, message) {
+  const original = button.textContent;
+  button.textContent = message;
+  button.classList.add("copied");
+  window.setTimeout(() => {
+    button.textContent = original;
+    button.classList.remove("copied");
+  }, 1100);
+}
+
+function rowToClipboardText(row) {
+  return [
+    ["姓名", row.name],
+    ["公司", row.company],
+    ["部門", row.department],
+    ["職稱", row.title],
+    ["手機", row.mobile],
+    ["電話", row.phone],
+    ["Email", row.email],
+    ["網站", row.website],
+    ["地址", row.address]
+  ]
+    .filter(([, value]) => value && value.trim())
+    .map(([label, value]) => `${label}：${value}`)
+    .join("\n");
+}
+
 function renderTable() {
   resultBody.innerHTML = "";
   if (!rows.length) {
@@ -208,13 +302,43 @@ function renderTable() {
       const tr = document.createElement("tr");
       columns.forEach(([key]) => {
         const td = document.createElement("td");
+        const fieldWrap = document.createElement("div");
+        fieldWrap.className = "field-wrap";
+
         const control = key === "rawText" ? document.createElement("textarea") : document.createElement("input");
         control.value = row[key] || "";
         control.addEventListener("input", e => rows[rowIndex][key] = e.target.value);
-        td.appendChild(control);
+
+        const copy = document.createElement("button");
+        copy.type = "button";
+        copy.className = "copy-field";
+        copy.textContent = "複製";
+        copy.title = "複製此欄";
+        copy.addEventListener("click", () => copyToClipboard(rows[rowIndex][key], copy));
+
+        fieldWrap.append(control, copy);
+        td.appendChild(fieldWrap);
         tr.appendChild(td);
       });
       const actionTd = document.createElement("td");
+
+      const copyRow = document.createElement("button");
+      copyRow.className = "delete-row";
+      copyRow.textContent = "複製整筆";
+      copyRow.addEventListener("click", () => {
+        copyToClipboard(rowToClipboardText(rows[rowIndex]), copyRow);
+      });
+
+      const swap = document.createElement("button");
+      swap.className = "delete-row";
+      swap.textContent = "姓名／公司互換";
+      swap.addEventListener("click", () => {
+        const temp = rows[rowIndex].name;
+        rows[rowIndex].name = rows[rowIndex].company;
+        rows[rowIndex].company = temp;
+        renderTable();
+      });
+
       const del = document.createElement("button");
       del.className = "delete-row";
       del.textContent = "刪除";
@@ -222,7 +346,14 @@ function renderTable() {
         rows.splice(rowIndex, 1);
         renderTable();
       });
-      actionTd.appendChild(del);
+
+      actionTd.append(
+        copyRow,
+        document.createElement("br"),
+        swap,
+        document.createElement("br"),
+        del
+      );
       tr.appendChild(actionTd);
       resultBody.appendChild(tr);
     });

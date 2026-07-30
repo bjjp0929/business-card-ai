@@ -90,3 +90,43 @@ footer { color: var(--muted); text-align: center; font-size: 13px; margin-top: 1
   .controls > * { flex: 1 1 150px; }
   .controls button { width: 100%; }
 }
+
+
+.field-wrap {
+  position: relative;
+  min-width: 145px;
+}
+
+.field-wrap input,
+.field-wrap textarea {
+  padding-right: 58px;
+}
+
+.copy-field {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  min-height: 28px;
+  padding: 0 9px;
+  border-radius: 8px;
+  font-size: 12px;
+  background: #fff8f1;
+  color: var(--accent-dark);
+  border-color: #ddc8b9;
+}
+
+.copy-field.copied,
+.delete-row.copied {
+  background: #e6f3e8;
+  color: #256332;
+  border-color: #b9d9bd;
+}
+
+td:last-child {
+  min-width: 150px;
+}
+
+td:last-child .delete-row {
+  width: 100%;
+  margin-bottom: 6px;
+}
