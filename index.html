@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>免費名片辨識器</title>
-  <link rel="stylesheet" href="styles.css?v=4.2.3" />
+  <link rel="stylesheet" href="styles.css?v=4.2.5" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
@@ -75,6 +75,7 @@
         <table id="resultTable">
           <thead>
             <tr>
+              <th data-i18n="filename">檔名</th>
               <th data-i18n="name">姓名</th>
               <th data-i18n="mobile">手機</th>
               <th data-i18n="phone">電話</th>
@@ -84,15 +85,15 @@
               <th data-i18n="department">部門</th>
               <th data-i18n="titleCol">職位</th>
               <th data-i18n="companyEnglish">公司英文名字</th>
+              <th data-i18n="postalCode">郵遞區號</th>
               <th data-i18n="website">網址</th>
               <th data-i18n="address">地址</th>
-              <th data-i18n="filename">檔名</th>
               <th data-i18n="rawText">原始辨識文字</th>
               <th data-i18n="actions"></th>
             </tr>
           </thead>
           <tbody id="resultBody">
-            <tr class="empty-row"><td colspan="14" data-i18n="empty">尚未辨識名片</td></tr>
+            <tr class="empty-row"><td colspan="15" data-i18n="empty">尚未辨識名片</td></tr>
           </tbody>
         </table>
       </div>
@@ -111,6 +112,6 @@
     <span class="paw-pad"></span>
   </div>
 
-  <script src="app.js?v=4.2.3"></script>
+  <script src="app.js?v=4.2.5"></script>
 </body>
 </html>

@@ -28,6 +28,7 @@ const translations = {
     fax: "傳真",
     email: "郵箱",
     website: "網站",
+    postalCode: "郵遞區號",
     address: "地址",
     rawText: "原始辨識文字",
     actions: "",
@@ -48,7 +49,7 @@ const translations = {
     labels: {
       name: "姓名", mobile: "手機", phone: "電話", fax: "傳真", email: "郵箱",
       company: "公司", department: "部門", title: "職位", companyEnglish: "公司英文名字",
-      website: "網址", address: "地址"
+      postalCode: "郵遞區號", website: "網址", address: "地址"
     }
   },
   ko: {
@@ -79,6 +80,7 @@ const translations = {
     fax: "팩스",
     email: "이메일",
     website: "웹사이트",
+    postalCode: "우편번호",
     address: "주소",
     rawText: "원본 인식 텍스트",
     actions: "",
@@ -99,7 +101,7 @@ const translations = {
     labels: {
       name: "이름", mobile: "휴대전화", phone: "전화", fax: "팩스", email: "이메일",
       company: "회사", department: "부서", title: "직함", companyEnglish: "회사 영문명",
-      website: "웹사이트", address: "주소"
+      postalCode: "우편번호", website: "웹사이트", address: "주소"
     }
   },
   en: {
@@ -130,6 +132,7 @@ const translations = {
     fax: "Fax",
     email: "Email",
     website: "Website",
+    postalCode: "Postal Code",
     address: "Address",
     rawText: "Raw OCR text",
     actions: "",
@@ -150,7 +153,7 @@ const translations = {
     labels: {
       name: "Name", mobile: "Mobile", phone: "Phone", fax: "Fax", email: "Email",
       company: "Company", department: "Department", title: "Title", companyEnglish: "Company English Name",
-      website: "Website", address: "Address"
+      postalCode: "Postal Code", website: "Website", address: "Address"
     }
   }
 };
@@ -301,7 +304,7 @@ async function scanAll() {
       console.error(error);
       rows.push({
         filename: file.name, name: "", mobile: "", phone: "", fax: "", email: "",
-        company: "", department: "", title: "", companyEnglish: "", website: "", address: "",
+        company: "", department: "", title: "", companyEnglish: "", postalCode: "", website: "", address: "",
         rawText: `${t("failed")}：${error.message || error}`
       });
     }
@@ -373,6 +376,28 @@ function parseBusinessCard(text, filename) {
   const titleLine = useful.find(l => titleKeywords.test(l)) || "";
   const departmentLine = useful.find(l => deptKeywords.test(l) && l !== titleLine) || "";
   const addressLine = useful.find(l => addressKeywords.test(l) && l.length >= 8) || "";
+
+  function detectPostalCode(address) {
+    if (!address) return "";
+
+    const explicitMatch = address.match(
+      /(?:〒|ZIP|Postal\s*Code|우편번호)\s*[:：]?\s*([0-9]{3}(?:-?[0-9]{2,4})?)/i
+    );
+    if (explicitMatch) return explicitMatch[1];
+
+    const japanMatch = address.match(/\b\d{3}-\d{4}\b/);
+    if (japanMatch) return japanMatch[0];
+
+    const usMatch = address.match(/\b\d{5}(?:-\d{4})?\b/);
+    if (usMatch) return usMatch[0];
+
+    const taiwanMatch = address.match(/(?:^|\s)(\d{3}(?:\d{2,3})?)(?=\s|$|[\u3400-\u9fff])/);
+    if (taiwanMatch) return taiwanMatch[1];
+
+    return "";
+  }
+
+  const postalCode = detectPostalCode(addressLine);
 
   const excludedBase = new Set([titleLine, departmentLine, addressLine].filter(Boolean));
 
@@ -458,6 +483,7 @@ function parseBusinessCard(text, filename) {
     department: departmentLine,
     title: titleLine,
     companyEnglish: companyEnglishLine,
+    postalCode,
     website: websites.join(" / "),
     address: addressLine,
     rawText: text.trim()
@@ -465,6 +491,7 @@ function parseBusinessCard(text, filename) {
 }
 
 const columns = [
+  ["filename", "檔名"],
   ["name", "姓名"],
   ["mobile", "手機"],
   ["phone", "電話"],
@@ -474,9 +501,9 @@ const columns = [
   ["department", "部門"],
   ["title", "職位"],
   ["companyEnglish", "公司英文名字"],
+  ["postalCode", "郵遞區號"],
   ["website", "網址"],
   ["address", "地址"],
-  ["filename", "檔名"],
   ["rawText", "原始辨識文字"]
 ];
 
@@ -525,6 +552,7 @@ function rowToClipboardText(row) {
     [labels.department, row.department],
     [labels.title, row.title],
     [labels.companyEnglish, row.companyEnglish],
+    [labels.postalCode, row.postalCode],
     [labels.website, row.website],
     [labels.address, row.address]
   ]
@@ -536,7 +564,7 @@ function rowToClipboardText(row) {
 function renderTable() {
   resultBody.innerHTML = "";
   if (!rows.length) {
-    resultBody.innerHTML = `<tr class="empty-row"><td colspan="14">${t("empty")}</td></tr>`;
+    resultBody.innerHTML = `<tr class="empty-row"><td colspan="15">${t("empty")}</td></tr>`;
   } else {
     rows.forEach((row, rowIndex) => {
       const tr = document.createElement("tr");
@@ -608,6 +636,7 @@ function renderTable() {
 function exportExcel() {
   const labels = t("labels");
   const data = rows.map(row => ({
+    [t("filename")]: row.filename,
     [labels.name]: row.name,
     [labels.mobile]: row.mobile,
     [labels.phone]: row.phone,
@@ -617,69 +646,22 @@ function exportExcel() {
     [labels.department]: row.department,
     [labels.title]: row.title,
     [labels.companyEnglish]: row.companyEnglish,
+    [labels.postalCode]: row.postalCode,
     [labels.website]: row.website,
     [labels.address]: row.address,
-    [t("filename")]: row.filename,
     [t("rawText")]: row.rawText
   }));
 
   const ws = XLSX.utils.json_to_sheet(data);
   ws["!cols"] = [
-    {wch: 16}, {wch: 18}, {wch: 18}, {wch: 18}, {wch: 28},
-    {wch: 28}, {wch: 20}, {wch: 20}, {wch: 32}, {wch: 28},
-    {wch: 42}, {wch: 22}, {wch: 60}
+    {wch: 22}, {wch: 16}, {wch: 18}, {wch: 18}, {wch: 18},
+    {wch: 28}, {wch: 28}, {wch: 20}, {wch: 20}, {wch: 32},
+    {wch: 14}, {wch: 28}, {wch: 42}, {wch: 60}
   ];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, t("sheetName"));
   const date = new Date().toISOString().slice(0, 10);
   XLSX.writeFile(wb, `${t("filePrefix")}_${date}.xlsx`);
 }
-
-// 小貓掌鼠標
-const catCursor = document.getElementById("catCursor");
-
-if (catCursor && window.matchMedia("(pointer: fine)").matches) {
-  let mouseX = 0;
-  let mouseY = 0;
-  let cursorX = 0;
-  let cursorY = 0;
-
-  document.addEventListener("mousemove", (event) => {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
-    catCursor.classList.add("visible");
-  });
-
-  document.addEventListener("mouseleave", () => {
-    catCursor.classList.remove("visible");
-  });
-
-  document.addEventListener("mousedown", () => {
-    catCursor.classList.add("clicking");
-  });
-
-  document.addEventListener("mouseup", () => {
-    catCursor.classList.remove("clicking");
-  });
-
-  document.addEventListener("mouseover", (event) => {
-    const interactiveElement = event.target.closest(
-      "a, button, input, textarea, select, label, .dropzone"
-    );
-    catCursor.classList.toggle("active", Boolean(interactiveElement));
-  });
-
-  function animateCatCursor() {
-    cursorX += (mouseX - cursorX) * 0.75;
-    cursorY += (mouseY - cursorY) * 0.75;
-    catCursor.style.left = `${cursorX}px`;
-    catCursor.style.top = `${cursorY}px`;
-    requestAnimationFrame(animateCatCursor);
-  }
-
-  animateCatCursor();
-}
-
-applyLanguage(currentUiLanguage);
 
 renderTable();
