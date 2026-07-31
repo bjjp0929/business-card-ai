@@ -211,7 +211,6 @@ const translations = {
 };
 
 const uiLanguageButtons = [...document.querySelectorAll(".language-flag")];
-const uiLanguageLabel = document.getElementById("uiLanguageLabel");
 const languageSwitcher = document.querySelector(".language-switcher");
 let currentUiLanguage = localStorage.getItem("businessCardUiLanguage") || "zh-TW";
 
@@ -224,7 +223,6 @@ function applyLanguage(language) {
   localStorage.setItem("businessCardUiLanguage", currentUiLanguage);
   document.documentElement.lang = currentUiLanguage;
   document.title = t("pageTitle");
-  uiLanguageLabel.textContent = t("uiLanguage");
   languageSwitcher?.setAttribute("aria-label", t("uiLanguage"));
   uiLanguageButtons.forEach((button) => {
     const active = button.dataset.language === currentUiLanguage;
@@ -729,6 +727,7 @@ function renderTable() {
       const tr = document.createElement("tr");
       columns.forEach(([key]) => {
         const td = document.createElement("td");
+        td.classList.add(`column-${key}`);
         const fieldWrap = document.createElement("div");
         fieldWrap.className = "field-wrap";
 
@@ -736,14 +735,17 @@ function renderTable() {
         control.value = row[key] || "";
         control.addEventListener("input", e => rows[rowIndex][key] = e.target.value);
 
-        const copy = document.createElement("button");
-        copy.type = "button";
-        copy.className = "copy-field";
-        copy.textContent = t("copy");
-        copy.title = t("copyTitle");
-        copy.addEventListener("click", () => copyToClipboard(rows[rowIndex][key], copy));
+        fieldWrap.append(control);
 
-        fieldWrap.append(control, copy);
+        if (key !== "filename") {
+          const copy = document.createElement("button");
+          copy.type = "button";
+          copy.className = "copy-field";
+          copy.textContent = t("copy");
+          copy.title = t("copyTitle");
+          copy.addEventListener("click", () => copyToClipboard(rows[rowIndex][key], copy));
+          fieldWrap.append(copy);
+        }
         td.appendChild(fieldWrap);
         tr.appendChild(td);
       });
@@ -851,10 +853,8 @@ if (catCursor && window.matchMedia("(pointer: fine)").matches) {
   });
 
   document.addEventListener("mouseover", (event) => {
-    const interactiveElement = event.target.closest(
-      "a, button, input, textarea, select, label, .dropzone"
-    );
-    catCursor.classList.toggle("active", Boolean(interactiveElement));
+    const copyButton = event.target.closest(".copy-field");
+    catCursor.classList.toggle("active", Boolean(copyButton));
   });
 
   function animateCatCursor() {
