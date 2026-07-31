@@ -293,3 +293,34 @@ thead .column-filename, thead .column-name { z-index:7; background:var(--soft); 
 .column-phone input {
   min-width: 155px;
 }
+
+
+/* v4.3.2 滿版圓形國旗 */
+.language-flag {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.language-flag svg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: none;
+  display: block;
+}
+
+/* 目前編輯中的文字格 */
+.results-table td:focus-within {
+  background: #eee5dd;
+}
+
+/* 傳真欄約 15 碼寬 */
+.column-fax {
+  min-width: 190px;
+  width: 190px;
+}
+
+.column-fax input {
+  min-width: 155px;
+}

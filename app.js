@@ -658,8 +658,8 @@ const columns = [
   ["department", "部門"],
   ["title", "職位"],
   ["companyEnglish", "公司英文名字"],
-  ["postalCode", "郵遞區號"],
   ["website", "網址"],
+  ["postalCode", "郵遞區號"],
   ["address", "地址"],
   ["rawText", "原始辨識文字"]
 ];
@@ -709,8 +709,8 @@ function rowToClipboardText(row) {
     [labels.department, row.department],
     [labels.title, row.title],
     [labels.companyEnglish, row.companyEnglish],
-    [labels.postalCode, row.postalCode],
     [labels.website, row.website],
+    [labels.postalCode, row.postalCode],
     [labels.address, row.address]
   ]
     .filter(([, value]) => value && value.trim())
@@ -807,8 +807,8 @@ function exportExcel() {
     [labels.department]: row.department,
     [labels.title]: row.title,
     [labels.companyEnglish]: row.companyEnglish,
-    [labels.postalCode]: row.postalCode,
     [labels.website]: row.website,
+    [labels.postalCode]: row.postalCode,
     [labels.address]: row.address,
     [t("rawText")]: row.rawText
   }));
@@ -853,8 +853,14 @@ if (catCursor && window.matchMedia("(pointer: fine)").matches) {
   });
 
   document.addEventListener("mouseover", (event) => {
-    const copyButton = event.target.closest(".copy-field");
-    catCursor.classList.toggle("active", Boolean(copyButton));
+    const textField = event.target.closest("input, textarea");
+    const interactiveElement = event.target.closest(
+      "a, button, select, label, .dropzone"
+    );
+    catCursor.classList.toggle(
+      "active",
+      Boolean(interactiveElement) && !textField
+    );
   });
 
   function animateCatCursor() {
