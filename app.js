@@ -664,4 +664,51 @@ function exportExcel() {
   XLSX.writeFile(wb, `${t("filePrefix")}_${date}.xlsx`);
 }
 
+// 小貓掌鼠標
+const catCursor = document.getElementById("catCursor");
+
+if (catCursor && window.matchMedia("(pointer: fine)").matches) {
+  let mouseX = 0;
+  let mouseY = 0;
+  let cursorX = 0;
+  let cursorY = 0;
+
+  document.addEventListener("mousemove", (event) => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+    catCursor.classList.add("visible");
+  });
+
+  document.addEventListener("mouseleave", () => {
+    catCursor.classList.remove("visible");
+  });
+
+  document.addEventListener("mousedown", () => {
+    catCursor.classList.add("clicking");
+  });
+
+  document.addEventListener("mouseup", () => {
+    catCursor.classList.remove("clicking");
+  });
+
+  document.addEventListener("mouseover", (event) => {
+    const interactiveElement = event.target.closest(
+      "a, button, input, textarea, select, label, .dropzone"
+    );
+    catCursor.classList.toggle("active", Boolean(interactiveElement));
+  });
+
+  function animateCatCursor() {
+    cursorX += (mouseX - cursorX) * 0.75;
+    cursorY += (mouseY - cursorY) * 0.75;
+    catCursor.style.left = `${cursorX}px`;
+    catCursor.style.top = `${cursorY}px`;
+    requestAnimationFrame(animateCatCursor);
+  }
+
+  animateCatCursor();
+}
+
+applyLanguage(currentUiLanguage);
+
 renderTable();
