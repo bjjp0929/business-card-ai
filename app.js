@@ -177,53 +177,13 @@ function applyLanguage(language) {
     if (typeof value === "string") element.textContent = value;
   });
 
-  // 小貓掌鼠標
-const catCursor = document.getElementById("catCursor");
+  renderTable();
 
-if (catCursor && window.matchMedia("(pointer: fine)").matches) {
-  let mouseX = 0;
-  let mouseY = 0;
-  let cursorX = 0;
-  let cursorY = 0;
-
-  document.addEventListener("mousemove", (event) => {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
-    catCursor.classList.add("visible");
-  });
-
-  document.addEventListener("mouseleave", () => {
-    catCursor.classList.remove("visible");
-  });
-
-  document.addEventListener("mousedown", () => {
-    catCursor.classList.add("clicking");
-  });
-
-  document.addEventListener("mouseup", () => {
-    catCursor.classList.remove("clicking");
-  });
-
-  document.addEventListener("mouseover", (event) => {
-    const interactiveElement = event.target.closest(
-      "a, button, input, textarea, select, label, .dropzone"
-    );
-    catCursor.classList.toggle("active", Boolean(interactiveElement));
-  });
-
-  function animateCatCursor() {
-    cursorX += (mouseX - cursorX) * 0.24;
-    cursorY += (mouseY - cursorY) * 0.24;
-    catCursor.style.left = `${cursorX}px`;
-    catCursor.style.top = `${cursorY}px`;
-    requestAnimationFrame(animateCatCursor);
-  }
-
-  animateCatCursor();
-}
-
-applyLanguage(currentUiLanguage);
-  if (!progressWrap.classList.contains("hidden") && rows.length === 0) {
+  if (
+    typeof progressWrap !== "undefined" &&
+    !progressWrap.classList.contains("hidden") &&
+    rows.length === 0
+  ) {
     progressText.textContent = t("ready");
   }
 }
@@ -674,5 +634,52 @@ function exportExcel() {
   const date = new Date().toISOString().slice(0, 10);
   XLSX.writeFile(wb, `${t("filePrefix")}_${date}.xlsx`);
 }
+
+// 小貓掌鼠標
+const catCursor = document.getElementById("catCursor");
+
+if (catCursor && window.matchMedia("(pointer: fine)").matches) {
+  let mouseX = 0;
+  let mouseY = 0;
+  let cursorX = 0;
+  let cursorY = 0;
+
+  document.addEventListener("mousemove", (event) => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+    catCursor.classList.add("visible");
+  });
+
+  document.addEventListener("mouseleave", () => {
+    catCursor.classList.remove("visible");
+  });
+
+  document.addEventListener("mousedown", () => {
+    catCursor.classList.add("clicking");
+  });
+
+  document.addEventListener("mouseup", () => {
+    catCursor.classList.remove("clicking");
+  });
+
+  document.addEventListener("mouseover", (event) => {
+    const interactiveElement = event.target.closest(
+      "a, button, input, textarea, select, label, .dropzone"
+    );
+    catCursor.classList.toggle("active", Boolean(interactiveElement));
+  });
+
+  function animateCatCursor() {
+    cursorX += (mouseX - cursorX) * 0.75;
+    cursorY += (mouseY - cursorY) * 0.75;
+    catCursor.style.left = `${cursorX}px`;
+    catCursor.style.top = `${cursorY}px`;
+    requestAnimationFrame(animateCatCursor);
+  }
+
+  animateCatCursor();
+}
+
+applyLanguage(currentUiLanguage);
 
 renderTable();
