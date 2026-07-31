@@ -132,6 +132,25 @@ td:last-child .delete-row {
 }
 
 
+.topbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.ui-language-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ui-language-label select {
+  min-width: 132px;
+}
+
 /* 小貓掌鼠標 */
 @media (pointer: fine) {
   body,
@@ -153,32 +172,17 @@ td:last-child .delete-row {
     pointer-events: none;
     z-index: 99999;
     opacity: 0;
-    transform:
-      translate(-50%, -50%)
-      rotate(-18deg)
-      scale(0.82);
-    transition:
-      opacity 0.18s ease,
-      transform 0.16s ease;
+    transform: translate(-50%, -50%) rotate(-18deg) scale(0.82);
+    transition: opacity 0.18s ease, transform 0.16s ease;
     filter: drop-shadow(0 3px 3px rgba(70, 40, 35, 0.18));
   }
 
-  .cat-cursor.visible {
-    opacity: 1;
-  }
-
+  .cat-cursor.visible { opacity: 1; }
   .cat-cursor.active {
-    transform:
-      translate(-50%, -50%)
-      rotate(0deg)
-      scale(1.15);
+    transform: translate(-50%, -50%) rotate(0deg) scale(1.15);
   }
-
   .cat-cursor.clicking {
-    transform:
-      translate(-50%, -50%)
-      rotate(-8deg)
-      scale(0.72);
+    transform: translate(-50%, -50%) rotate(-8deg) scale(0.72);
   }
 
   .cat-cursor .toe,
@@ -194,29 +198,10 @@ td:last-child .delete-row {
     border-radius: 50%;
   }
 
-  .cat-cursor .toe-1 {
-    top: 5px;
-    left: 4px;
-    transform: rotate(-24deg);
-  }
-
-  .cat-cursor .toe-2 {
-    top: 1px;
-    left: 12px;
-    transform: rotate(-8deg);
-  }
-
-  .cat-cursor .toe-3 {
-    top: 2px;
-    left: 21px;
-    transform: rotate(10deg);
-  }
-
-  .cat-cursor .toe-4 {
-    top: 8px;
-    left: 27px;
-    transform: rotate(28deg);
-  }
+  .cat-cursor .toe-1 { top: 5px; left: 4px; transform: rotate(-24deg); }
+  .cat-cursor .toe-2 { top: 1px; left: 12px; transform: rotate(-8deg); }
+  .cat-cursor .toe-3 { top: 2px; left: 21px; transform: rotate(10deg); }
+  .cat-cursor .toe-4 { top: 8px; left: 27px; transform: rotate(28deg); }
 
   .cat-cursor .paw-pad {
     width: 22px;
@@ -233,9 +218,12 @@ td:last-child .delete-row {
   }
 }
 
-/* 手機和平板維持正常觸控，不顯示貓掌 */
 @media (pointer: coarse) {
-  .cat-cursor {
-    display: none;
-  }
+  .cat-cursor { display: none; }
+}
+
+@media (max-width: 760px) {
+  .topbar { justify-content: stretch; }
+  .ui-language-label { width: 100%; justify-content: space-between; }
+  .ui-language-label select { flex: 1; max-width: 190px; }
 }

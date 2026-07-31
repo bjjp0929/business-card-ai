@@ -4,41 +4,41 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>免費名片辨識器</title>
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4.2" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-
-  <div id="catCursor" class="cat-cursor" aria-hidden="true">
-  <span class="toe toe-1"></span>
-  <span class="toe toe-2"></span>
-  <span class="toe toe-3"></span>
-  <span class="toe toe-4"></span>
-  <span class="paw-pad"></span>
-</div>
-
-  
   <main class="container">
+    <div class="topbar">
+      <label class="ui-language-label">
+        <span id="uiLanguageLabel">介面語言</span>
+        <select id="uiLanguage" aria-label="介面語言">
+          <option value="zh-TW">繁體中文</option>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+        </select>
+      </label>
+    </div>
     <section class="hero">
       <div>
-        <p class="eyebrow">100% 免費・瀏覽器本機 OCR</p>
-        <h1>名片掃描 → Excel</h1>
-        <p class="sub">上傳多張名片，辨識中／英／韓文字，人工確認後匯出 Excel。</p>
+        <p class="eyebrow" data-i18n="eyebrow">100% 免費・瀏覽器本機 OCR</p>
+        <h1 data-i18n="title">名片掃描 → Excel</h1>
+        <p class="sub" data-i18n="subtitle">上傳多張名片，辨識中／英／韓文字，人工確認後匯出 Excel。</p>
       </div>
-      <div class="privacy">🔒 圖片不會上傳到本網站伺服器</div>
+      <div class="privacy" data-i18n="privacy">🔒 圖片不會上傳到本網站伺服器</div>
     </section>
 
     <section class="panel">
       <label class="dropzone" id="dropzone">
         <input id="fileInput" type="file" accept="image/*" multiple />
-        <strong>點擊或拖曳名片圖片到這裡</strong>
-        <span>支援 JPG、PNG、WEBP，可一次選多張</span>
+        <strong data-i18n="dropTitle">點擊或拖曳名片圖片到這裡</strong>
+        <span data-i18n="dropHint">支援 JPG、PNG、WEBP，可一次選多張</span>
       </label>
 
       <div class="controls">
         <label>
-          OCR 語言
+          <span data-i18n="ocrLanguage">OCR 語言</span>
           <select id="language">
             <option value="chi_tra+eng+kor">繁中＋英文＋韓文</option>
             <option value="chi_tra+eng">繁中＋英文</option>
@@ -46,14 +46,14 @@
             <option value="eng">英文</option>
           </select>
         </label>
-        <button id="scanBtn" class="primary" disabled>開始辨識</button>
-        <button id="exportBtn" disabled>匯出 Excel</button>
-        <button id="clearBtn" disabled>清空</button>
+        <button id="scanBtn" class="primary" disabled data-i18n="scan">開始辨識</button>
+        <button id="exportBtn" disabled data-i18n="export">匯出 Excel</button>
+        <button id="clearBtn" disabled data-i18n="clear">清空</button>
       </div>
 
       <div id="progressWrap" class="progress-wrap hidden">
         <div class="progress-head">
-          <span id="progressText">準備中</span>
+          <span id="progressText" data-i18n="ready">準備中</span>
           <span id="progressPercent">0%</span>
         </div>
         <div class="progress"><div id="progressBar"></div></div>
@@ -65,8 +65,8 @@
     <section class="panel table-panel">
       <div class="table-head">
         <div>
-          <h2>辨識結果</h2>
-          <p>OCR 不會永遠乖巧，匯出前請快速校對。</p>
+          <h2 data-i18n="resultsTitle">辨識結果</h2>
+          <p data-i18n="resultsHint">OCR 不會永遠乖巧，匯出前請快速校對。</p>
         </div>
         <span id="countBadge" class="badge">0 筆</span>
       </div>
@@ -75,32 +75,42 @@
         <table id="resultTable">
           <thead>
             <tr>
-              <th>檔名</th>
-              <th>姓名</th>
-              <th>公司</th>
-              <th>部門</th>
-              <th>職稱</th>
-              <th>手機</th>
-              <th>電話</th>
-              <th>Email</th>
-              <th>網站</th>
-              <th>地址</th>
-              <th>原始辨識文字</th>
-              <th></th>
+              <th data-i18n="name">姓名</th>
+              <th data-i18n="mobile">手機</th>
+              <th data-i18n="phone">電話</th>
+              <th data-i18n="fax">傳真</th>
+              <th data-i18n="email">郵箱</th>
+              <th data-i18n="company">公司</th>
+              <th data-i18n="department">部門</th>
+              <th data-i18n="titleCol">職位</th>
+              <th data-i18n="companyEnglish">公司英文名字</th>
+              <th data-i18n="website">網址</th>
+              <th data-i18n="address">地址</th>
+              <th data-i18n="filename">檔名</th>
+              <th data-i18n="rawText">原始辨識文字</th>
+              <th data-i18n="actions"></th>
             </tr>
           </thead>
           <tbody id="resultBody">
-            <tr class="empty-row"><td colspan="12">尚未辨識名片</td></tr>
+            <tr class="empty-row"><td colspan="14" data-i18n="empty">尚未辨識名片</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <footer>
+    <footer data-i18n="footer">
       第一次辨識某個語言時，瀏覽器需要下載免費 OCR 語言模型，可能稍等一會兒。
     </footer>
   </main>
 
-  <script src="app.js?v=3"></script>
+  <div id="catCursor" class="cat-cursor" aria-hidden="true">
+    <span class="toe toe-1"></span>
+    <span class="toe toe-2"></span>
+    <span class="toe toe-3"></span>
+    <span class="toe toe-4"></span>
+    <span class="paw-pad"></span>
+  </div>
+
+  <script src="app.js?v=4.2"></script>
 </body>
 </html>
