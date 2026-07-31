@@ -155,11 +155,64 @@ const translations = {
       company: "Company", department: "Department", title: "Title", companyEnglish: "Company English Name",
       postalCode: "Postal Code", website: "Website", address: "Address"
     }
+  },
+  ja: {
+    pageTitle: "無料名刺OCR",
+    uiLanguage: "表示言語",
+    eyebrow: "100%無料・ブラウザ内OCR",
+    title: "名刺スキャン → Excel",
+    subtitle: "複数の名刺画像をアップロードし、中国語・英語・韓国語を認識して、確認後にExcelへ出力します。",
+    privacy: "🔒 画像は本サイトのサーバーへアップロードされません",
+    dropTitle: "名刺画像をクリック、またはここへドラッグ",
+    dropHint: "JPG・PNG・WEBP対応、複数選択可能",
+    ocrLanguage: "OCR言語",
+    scan: "認識を開始",
+    export: "Excelに出力",
+    clear: "クリア",
+    ready: "準備中",
+    resultsTitle: "認識結果",
+    resultsHint: "OCRは完全ではありません。出力前に内容をご確認ください。",
+    footer: "初めて使用する言語は、無料OCR言語モデルのダウンロードに少し時間がかかる場合があります。",
+    filename: "ファイル名",
+    name: "氏名",
+    company: "会社",
+    companyEnglish: "会社英語名",
+    department: "部署",
+    titleCol: "役職",
+    mobile: "携帯電話",
+    phone: "電話",
+    fax: "FAX",
+    email: "メール",
+    website: "ウェブサイト",
+    postalCode: "郵便番号",
+    address: "住所",
+    rawText: "OCR原文",
+    actions: "",
+    empty: "まだ名刺が認識されていません",
+    count: (n) => `${n}件`,
+    scanning: (i, total, name) => `認識中 ${i}/${total}：${name}`,
+    completed: "認識が完了しました。各項目をご確認ください。",
+    failed: "認識に失敗しました",
+    copy: "コピー",
+    copyTitle: "この項目をコピー",
+    copied: "コピー済み",
+    blank: "空欄",
+    copyRow: "一行をコピー",
+    swap: "氏名／会社を入れ替え",
+    delete: "削除",
+    sheetName: "名刺データ",
+    filePrefix: "名刺OCR",
+    labels: {
+      name: "氏名", mobile: "携帯電話", phone: "電話", fax: "FAX", email: "メール",
+      company: "会社", department: "部署", title: "役職", companyEnglish: "会社英語名",
+      postalCode: "郵便番号", website: "ウェブサイト", address: "住所"
+    }
   }
 };
 
-const uiLanguageSelect = document.getElementById("uiLanguage");
+const uiLanguageButtons = [...document.querySelectorAll(".language-flag")];
 const uiLanguageLabel = document.getElementById("uiLanguageLabel");
+const languageSwitcher = document.querySelector(".language-switcher");
 let currentUiLanguage = localStorage.getItem("businessCardUiLanguage") || "zh-TW";
 
 function t(key) {
@@ -171,8 +224,13 @@ function applyLanguage(language) {
   localStorage.setItem("businessCardUiLanguage", currentUiLanguage);
   document.documentElement.lang = currentUiLanguage;
   document.title = t("pageTitle");
-  uiLanguageSelect.value = currentUiLanguage;
   uiLanguageLabel.textContent = t("uiLanguage");
+  languageSwitcher?.setAttribute("aria-label", t("uiLanguage"));
+  uiLanguageButtons.forEach((button) => {
+    const active = button.dataset.language === currentUiLanguage;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
 
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const key = element.dataset.i18n;
@@ -191,8 +249,10 @@ function applyLanguage(language) {
   }
 }
 
-uiLanguageSelect.addEventListener("change", (event) => {
-  applyLanguage(event.target.value);
+uiLanguageButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    applyLanguage(button.dataset.language);
+  });
 });
 
 const fileInput = document.getElementById("fileInput");
@@ -221,6 +281,15 @@ fileInput.addEventListener("change", () => addFiles([...fileInput.files]));
 }));
 dropzone.addEventListener("drop", e => addFiles([...e.dataTransfer.files].filter(f => f.type.startsWith("image/"))));
 
+function getDisplayFilename(originalName) {
+  const match = originalName.match(/_(\d+)(?=\.[^.]+$)/);
+  if (!match) return originalName;
+
+  const extensionMatch = originalName.match(/(\.[^.]+)$/);
+  const extension = extensionMatch ? extensionMatch[1] : "";
+  return `${match[1].padStart(3, "0")}${extension}`;
+}
+
 function addFiles(files) {
   const seen = new Set(selectedFiles.map(f => `${f.name}-${f.size}-${f.lastModified}`));
 
@@ -232,9 +301,9 @@ function addFiles(files) {
     }
   });
 
-  // 依檔名自然排序，例如 1.jpg、2.jpg、10.jpg
+  // 先依重新命名後的檔名自然排序，例如 001.jpg、002.jpg、013.jpg
   selectedFiles.sort((a, b) =>
-    a.name.localeCompare(b.name, undefined, {
+    getDisplayFilename(a.name).localeCompare(getDisplayFilename(b.name), undefined, {
       numeric: true,
       sensitivity: "base"
     })
@@ -251,7 +320,8 @@ function renderPreviews() {
     const img = document.createElement("img");
     img.src = URL.createObjectURL(file);
     const name = document.createElement("div");
-    name.textContent = file.name;
+    name.textContent = getDisplayFilename(file.name);
+    name.title = file.name;
     const btn = document.createElement("button");
     btn.type = "button";
     btn.textContent = "×";
@@ -285,7 +355,7 @@ async function scanAll() {
 
   for (let i = 0; i < selectedFiles.length; i++) {
     const file = selectedFiles[i];
-    progressText.textContent = t("scanning")(i + 1, selectedFiles.length, file.name);
+    progressText.textContent = t("scanning")(i + 1, selectedFiles.length, getDisplayFilename(file.name));
     try {
       const result = await Tesseract.recognize(
         file,
@@ -299,11 +369,11 @@ async function scanAll() {
           }
         }
       );
-      rows.push(parseBusinessCard(result.data.text, file.name));
+      rows.push(parseBusinessCard(result.data.text, getDisplayFilename(file.name)));
     } catch (error) {
       console.error(error);
       rows.push({
-        filename: file.name, name: "", mobile: "", phone: "", fax: "", email: "",
+        filename: getDisplayFilename(file.name), name: "", mobile: "", phone: "", fax: "", email: "",
         company: "", department: "", title: "", companyEnglish: "", postalCode: "", website: "", address: "",
         rawText: `${t("failed")}：${error.message || error}`
       });
@@ -380,21 +450,14 @@ function parseBusinessCard(text, filename) {
   function detectPostalCode(address) {
     if (!address) return "";
 
+    // 郵遞區號統一只接受 5 碼數字，並保留開頭的 0。
     const explicitMatch = address.match(
-      /(?:〒|ZIP|Postal\s*Code|우편번호)\s*[:：]?\s*([0-9]{3}(?:-?[0-9]{2,4})?)/i
+      /(?:ZIP|Postal\s*Code|우편번호|郵遞區號|邮政编码)\s*[:：]?\s*(\d{5})(?!\d)/i
     );
     if (explicitMatch) return explicitMatch[1];
 
-    const japanMatch = address.match(/\b\d{3}-\d{4}\b/);
-    if (japanMatch) return japanMatch[0];
-
-    const usMatch = address.match(/\b\d{5}(?:-\d{4})?\b/);
-    if (usMatch) return usMatch[0];
-
-    const taiwanMatch = address.match(/(?:^|\s)(\d{3}(?:\d{2,3})?)(?=\s|$|[\u3400-\u9fff])/);
-    if (taiwanMatch) return taiwanMatch[1];
-
-    return "";
+    const fiveDigitMatch = address.match(/(?:^|[^\d])(\d{5})(?!\d)/);
+    return fiveDigitMatch ? fiveDigitMatch[1] : "";
   }
 
   const postalCode = detectPostalCode(addressLine);
@@ -437,31 +500,127 @@ function parseBusinessCard(text, filename) {
       )
     ) || "";
 
-  const excludedForName = new Set([titleLine, departmentLine, addressLine, companyLine].filter(Boolean));
+  const excludedForName = new Set([departmentLine, addressLine, companyLine].filter(Boolean));
+
+  const koreanTitlePrefixes = [
+    "대표이사", "공동대표", "부대표", "대표", "회장", "사장",
+    "부사장", "전무이사", "상무이사", "전무", "상무", "이사",
+    "본부장", "실장", "팀장", "부장", "차장", "과장", "대리",
+    "주임", "사원"
+  ];
+
+  function cleanAsianName(line) {
+    if (!line) return "";
+
+    const compact = line
+      .replace(/[|｜丨:：;,，/()[\]{}]/g, " ")
+      .replace(/\s+/g, "");
+
+    if (/^[\u4e00-\u9fff]{2,4}$/.test(compact)) return compact;
+    if (/^[가-힣]{2,5}$/.test(compact)) return compact;
+    return "";
+  }
+
+  function extractNameFromTitleLine(line) {
+    if (!line) return "";
+
+    const compact = line
+      .replace(/[|｜丨:：;,，/()[\]{}]/g, "")
+      .replace(/\s+/g, "");
+
+    for (const title of koreanTitlePrefixes) {
+      if (!compact.startsWith(title)) continue;
+
+      const remainder = compact.slice(title.length);
+      if (/^[가-힣]{2,5}$/.test(remainder)) return remainder;
+    }
+
+    return "";
+  }
+
+  function cleanEnglishName(line) {
+    if (!line || /\d|@|www\.|https?:/i.test(line)) return "";
+
+    let cleaned = line
+      .replace(/^[|｜丨\s]+|[|｜丨\s]+$/g, "")
+      .replace(
+        /(?:,?\s*(?:Ph\.?\s*D\.?|M\.?\s*D\.?|D\.?\s*Phil\.?|MBA|CPA|Esq\.?))+\s*$/i,
+        ""
+      )
+      .replace(/,/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (titleKeywords.test(cleaned) || companyKeywords.test(cleaned)) return "";
+    if (!/^[A-Za-z][A-Za-z.'’\- ]{2,35}$/.test(cleaned)) return "";
+
+    const words = cleaned.split(/\s+/);
+    if (words.length < 2 || words.length > 4) return "";
+    if (words.every(word => /^[A-Z]{2,}$/.test(word))) return "";
+
+    return words
+      .map(word =>
+        word
+          .split("-")
+          .map(part =>
+            part.length > 1
+              ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+              : part.toUpperCase()
+          )
+          .join("-")
+      )
+      .join(" ");
+  }
+
+  // 第一優先：從「職稱＋姓名」同一行拆出韓文姓名。
+  const nameFromTitleLine = extractNameFromTitleLine(titleLine);
+
+  // 第二優先：辨識被 OCR 插入空格的中文／韓文姓名。
+  const asianNameCandidates = useful
+    .filter(line => !excludedForName.has(line))
+    .map(line => cleanAsianName(line))
+    .filter(Boolean);
+
+  // 第三優先：英文姓名，並清除逗號及學位後綴。
+  const englishNameCandidates = useful
+    .filter(line => !excludedForName.has(line))
+    .map(line => cleanEnglishName(line))
+    .filter(Boolean);
 
   function nameScore(line) {
     if (!line || excludedForName.has(line)) return -999;
-    if (companyKeywords.test(line) || titleKeywords.test(line) || deptKeywords.test(line)) return -999;
-    if (/\d/.test(line) || line.length > 30) return -999;
+    if (companyKeywords.test(line) || deptKeywords.test(line)) return -999;
+    if (/\d/.test(line) || line.length > 40) return -999;
+
+    const asianName = cleanAsianName(line);
+    const englishName = cleanEnglishName(line);
 
     let score = 0;
-    if (/^[\u4e00-\u9fff]{2,4}$/.test(line)) score += 12;
-    if (/^[가-힣]{2,5}$/.test(line)) score += 12;
-    if (/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3}$/.test(line)) score += 9;
-    if (/^[A-Za-z][A-Za-z .'-]{2,24}$/.test(line) && line.split(/\s+/).length <= 4) score += 4;
-    if (/^[A-Z0-9&.,'’\- ]{3,}$/.test(line)) score -= 8;
-    if (line.length <= 12) score += 2;
+    if (asianName) score += 14;
+    if (englishName) score += 10;
+    if (line.length <= 18) score += 2;
+    if (/^[A-Z0-9&.,'’\- ]{3,}$/.test(line) && !englishName) score -= 8;
     return score;
   }
 
-  const nameCandidates = useful
-    .map(line => ({ line, score: nameScore(line) }))
-    .filter(x => x.score > -999)
+  const generalNameCandidates = useful
+    .map(line => ({
+      line,
+      cleaned: cleanAsianName(line) || cleanEnglishName(line) || line,
+      score: nameScore(line)
+    }))
+    .filter(item => item.score > -999)
     .sort((a, b) => b.score - a.score);
 
-  const name = nameCandidates.length && nameCandidates[0].score >= 4
-    ? nameCandidates[0].line
-    : "";
+  const name =
+    nameFromTitleLine ||
+    asianNameCandidates[0] ||
+    englishNameCandidates[0] ||
+    (
+      generalNameCandidates.length && generalNameCandidates[0].score >= 4
+        ? generalNameCandidates[0].cleaned
+        : ""
+    );
 
   // If no company was found, choose the strongest remaining non-name line as fallback.
   if (!companyLine) {

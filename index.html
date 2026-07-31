@@ -4,21 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>免費名片辨識器</title>
-  <link rel="stylesheet" href="styles.css?v=4.2.6" />
+  <link rel="stylesheet" href="styles.css?v=4.2.9" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
   <main class="container">
     <div class="topbar">
-      <label class="ui-language-label">
-        <span id="uiLanguageLabel">介面語言</span>
-        <select id="uiLanguage" aria-label="介面語言">
-          <option value="zh-TW">繁體中文</option>
-          <option value="ko">한국어</option>
-          <option value="en">English</option>
-        </select>
-      </label>
+      <div class="language-switcher" role="group" aria-label="介面語言">
+        <span id="uiLanguageLabel" class="language-switcher-label">介面語言</span>
+        <button type="button" class="language-flag" data-language="zh-TW" aria-label="繁體中文" title="繁體中文">🇹🇼</button>
+        <button type="button" class="language-flag" data-language="ko" aria-label="한국어" title="한국어">🇰🇷</button>
+        <button type="button" class="language-flag" data-language="en" aria-label="English" title="English">🇺🇸</button>
+        <button type="button" class="language-flag" data-language="ja" aria-label="日本語" title="日本語">🇯🇵</button>
+      </div>
     </div>
     <section class="hero">
       <div>
@@ -112,6 +111,6 @@
     <span class="paw-pad"></span>
   </div>
 
-  <script src="app.js?v=4.2.6"></script>
+  <script src="app.js?v=4.2.9"></script>
 </body>
 </html>
