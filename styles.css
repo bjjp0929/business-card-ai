@@ -324,3 +324,33 @@ thead .column-filename, thead .column-name { z-index:7; background:var(--soft); 
 .column-fax input {
   min-width: 155px;
 }
+
+
+/* v4.3.3 國旗真正滿版 */
+.language-flag {
+  padding: 0 !important;
+  background: transparent !important;
+  overflow: hidden;
+}
+
+.language-flag svg {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50%;
+  transform: scale(1.18);
+  transform-origin: center;
+}
+
+/* 點入任一欄位時，整張名片橫列高亮 */
+.results-table td:focus-within {
+  background: inherit;
+}
+
+.results-table tbody tr:focus-within td {
+  background: #eee5dd !important;
+}
+
+.results-table tbody tr:focus-within .column-filename,
+.results-table tbody tr:focus-within .column-name {
+  background: #eee5dd !important;
+}
