@@ -860,7 +860,7 @@ function exportExcel() {
 // 小貓掌鼠標
 const catCursor = document.getElementById("catCursor");
 
-if (catCursor && window.matchMedia("(any-pointer: fine)").matches) {
+if (catCursor) {
   let mouseX = 0;
   let mouseY = 0;
   let cursorX = 0;
