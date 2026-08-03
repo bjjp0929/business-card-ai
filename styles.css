@@ -354,3 +354,19 @@ thead .column-filename, thead .column-name { z-index:7; background:var(--soft); 
 .results-table tbody tr:focus-within .column-name {
   background: #eee5dd !important;
 }
+
+
+/* v4.3.4 整列高亮修正：連輸入框一起變色 */
+.results-table tbody tr:focus-within td,
+.results-table tbody tr:focus-within input,
+.results-table tbody tr:focus-within textarea {
+  background: #eee5dd !important;
+}
+
+.results-table tbody tr:focus-within .copy-field {
+  background: #fff8f2;
+}
+
+.results-table tbody tr:focus-within {
+  box-shadow: inset 0 1px 0 #d8c9bd, inset 0 -1px 0 #d8c9bd;
+}
