@@ -404,3 +404,26 @@ thead .column-filename, thead .column-name { z-index:7; background:var(--soft); 
 .column-address textarea {
   min-width: 340px;
 }
+
+
+/* v4.3.6 由 JavaScript 明確標記目前編輯列 */
+.results-table tbody tr.editing-row td,
+.results-table tbody tr.editing-row input,
+.results-table tbody tr.editing-row textarea {
+  background: #F3DDD5 !important;
+}
+
+.results-table tbody tr.editing-row td {
+  border-top-color: #DFC2B7 !important;
+  border-bottom-color: #DFC2B7 !important;
+}
+
+.results-table tbody tr.editing-row .copy-field {
+  background: #FFF7F3 !important;
+  border-color: #DDBCAF !important;
+}
+
+.results-table tbody tr.editing-row .column-filename,
+.results-table tbody tr.editing-row .column-name {
+  background: #F3DDD5 !important;
+}

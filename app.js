@@ -794,6 +794,38 @@ function renderTable() {
   clearBtn.disabled = selectedFiles.length === 0 && rows.length === 0;
 }
 
+
+function updateEditingRow(target) {
+  document.querySelectorAll(".results-table tbody tr.editing-row").forEach((row) => {
+    row.classList.remove("editing-row");
+  });
+
+  const field = target.closest("input, textarea");
+  if (!field) return;
+
+  const row = field.closest("tr");
+  if (row) row.classList.add("editing-row");
+}
+
+resultsBody.addEventListener("focusin", (event) => {
+  updateEditingRow(event.target);
+});
+
+resultsBody.addEventListener("click", (event) => {
+  updateEditingRow(event.target);
+});
+
+resultsBody.addEventListener("focusout", () => {
+  requestAnimationFrame(() => {
+    const active = document.activeElement;
+    if (!resultsBody.contains(active)) {
+      resultsBody.querySelectorAll("tr.editing-row").forEach((row) => {
+        row.classList.remove("editing-row");
+      });
+    }
+  });
+});
+
 function exportExcel() {
   const labels = t("labels");
   const data = rows.map(row => ({
