@@ -370,3 +370,37 @@ thead .column-filename, thead .column-name { z-index:7; background:var(--soft); 
 .results-table tbody tr:focus-within {
   box-shadow: inset 0 1px 0 #d8c9bd, inset 0 -1px 0 #d8c9bd;
 }
+
+
+/* v4.3.5 編輯中的整列高亮 */
+.results-table tbody tr:focus-within td,
+.results-table tbody tr:focus-within input,
+.results-table tbody tr:focus-within textarea {
+  background: #F3DDD5 !important;
+}
+
+.results-table tbody tr:focus-within td {
+  border-top-color: #DFC2B7 !important;
+  border-bottom-color: #DFC2B7 !important;
+}
+
+.results-table tbody tr:focus-within .copy-field {
+  background: #FFF7F3 !important;
+  border-color: #DDBCAF !important;
+}
+
+.results-table tbody tr:focus-within .column-filename,
+.results-table tbody tr:focus-within .column-name {
+  background: #F3DDD5 !important;
+}
+
+/* 地址欄加寬 */
+.column-address {
+  min-width: 380px;
+  width: 380px;
+}
+
+.column-address input,
+.column-address textarea {
+  min-width: 340px;
+}
