@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>免費名片辨識器</title>
-  <link rel="stylesheet" href="styles.css?v=4.3.4" />
+  <link rel="stylesheet" href="styles.css?v=4.4.1" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
@@ -70,7 +70,7 @@
       </div>
 
       <div class="table-wrap">
-        <table id="resultTable">
+        <table id="resultTable" class="results-table">
           <thead>
             <tr>
               <th class="column-filename" data-i18n="filename">檔名</th>
@@ -78,16 +78,16 @@
               <th class="column-mobile" data-i18n="mobile">手機</th>
               <th class="column-phone" data-i18n="phone">電話</th>
               <th class="column-fax" data-i18n="fax">傳真</th>
-              <th data-i18n="email">郵箱</th>
-              <th data-i18n="company">公司</th>
-              <th data-i18n="department">部門</th>
-              <th data-i18n="titleCol">職位</th>
-              <th data-i18n="companyEnglish">公司英文名字</th>
-              <th data-i18n="website">網址</th>
-              <th data-i18n="postalCode">郵遞區號</th>
-              <th data-i18n="address">地址</th>
-              <th data-i18n="rawText">原始辨識文字</th>
-              <th data-i18n="actions"></th>
+              <th class="column-email" data-i18n="email">郵箱</th>
+              <th class="column-company" data-i18n="company">公司</th>
+              <th class="column-department" data-i18n="department">部門</th>
+              <th class="column-title" data-i18n="titleCol">職位</th>
+              <th class="column-companyEnglish" data-i18n="companyEnglish">公司英文名字</th>
+              <th class="column-website" data-i18n="website">網址</th>
+              <th class="column-postalCode" data-i18n="postalCode">郵遞區號</th>
+              <th class="column-address" data-i18n="address">地址</th>
+              <th class="column-rawText" data-i18n="rawText">原始辨識文字</th>
+              <th class="column-actions" data-i18n="actions"></th>
             </tr>
           </thead>
           <tbody id="resultBody">
@@ -110,6 +110,6 @@
     <span class="paw-pad"></span>
   </div>
 
-  <script src="app.js?v=4.3.4"></script>
+  <script src="app.js?v=4.4.0"></script>
 </body>
 </html>

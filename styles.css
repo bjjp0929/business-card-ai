@@ -370,3 +370,216 @@ thead .column-filename, thead .column-name { z-index:7; background:var(--soft); 
 .results-table tbody tr:focus-within {
   box-shadow: inset 0 1px 0 #d8c9bd, inset 0 -1px 0 #d8c9bd;
 }
+
+
+/* v4.3.5 編輯中的整列高亮 */
+.results-table tbody tr:focus-within td,
+.results-table tbody tr:focus-within input,
+.results-table tbody tr:focus-within textarea {
+  background: #F3DDD5 !important;
+}
+
+.results-table tbody tr:focus-within td {
+  border-top-color: #DFC2B7 !important;
+  border-bottom-color: #DFC2B7 !important;
+}
+
+.results-table tbody tr:focus-within .copy-field {
+  background: #FFF7F3 !important;
+  border-color: #DDBCAF !important;
+}
+
+.results-table tbody tr:focus-within .column-filename,
+.results-table tbody tr:focus-within .column-name {
+  background: #F3DDD5 !important;
+}
+
+/* 地址欄加寬 */
+.column-address {
+  min-width: 380px;
+  width: 380px;
+}
+
+.column-address input,
+.column-address textarea {
+  min-width: 340px;
+}
+
+
+/* v4.3.6 由 JavaScript 明確標記目前編輯列 */
+.results-table tbody tr.editing-row td,
+.results-table tbody tr.editing-row input,
+.results-table tbody tr.editing-row textarea {
+  background: #F3DDD5 !important;
+}
+
+.results-table tbody tr.editing-row td {
+  border-top-color: #DFC2B7 !important;
+  border-bottom-color: #DFC2B7 !important;
+}
+
+.results-table tbody tr.editing-row .copy-field {
+  background: #FFF7F3 !important;
+  border-color: #DDBCAF !important;
+}
+
+.results-table tbody tr.editing-row .column-filename,
+.results-table tbody tr.editing-row .column-name {
+  background: #F3DDD5 !important;
+}
+
+
+/* v4.3.8 穩定桌機表格欄寬 */
+.results-table {
+  width: max-content;
+  min-width: 100%;
+  table-layout: auto;
+}
+
+.column-email {
+  min-width: 250px;
+  width: 250px;
+}
+
+.column-email .field-wrap {
+  min-width: 225px;
+}
+
+.column-company {
+  min-width: 210px;
+  width: 210px;
+}
+
+.column-department {
+  min-width: 160px;
+  width: 160px;
+}
+
+.column-title {
+  min-width: 160px;
+  width: 160px;
+}
+
+.column-companyEnglish {
+  min-width: 230px;
+  width: 230px;
+}
+
+.column-website {
+  min-width: 220px;
+  width: 220px;
+}
+
+.column-postalCode {
+  min-width: 115px;
+  width: 115px;
+}
+
+.column-address {
+  min-width: 380px;
+  width: 380px;
+}
+
+.column-address .field-wrap {
+  min-width: 350px;
+}
+
+.column-rawText {
+  min-width: 330px;
+  width: 330px;
+}
+
+.column-actions {
+  min-width: 150px;
+  width: 150px;
+}
+
+/* v4.3.8 明確顯示目前編輯列 */
+.results-table tbody tr.editing-row td,
+.results-table tbody tr.editing-row input,
+.results-table tbody tr.editing-row textarea {
+  background: #F3DDD5 !important;
+}
+
+.results-table tbody tr.editing-row td {
+  border-top: 1px solid #DFC2B7 !important;
+  border-bottom: 1px solid #DFC2B7 !important;
+}
+
+.results-table tbody tr.editing-row .copy-field {
+  background: #FFF7F3 !important;
+  border-color: #DDBCAF !important;
+}
+
+
+/* v4.4.1 統一桌機欄位寬度，肉球程式完全不動 */
+.column-mobile,
+.column-phone,
+.column-fax,
+.column-email,
+.column-company,
+.column-department,
+.column-title,
+.column-companyEnglish,
+.column-website,
+.column-postalCode {
+  min-width: 190px !important;
+  width: 190px !important;
+  max-width: 190px !important;
+}
+
+.column-mobile .field-wrap,
+.column-phone .field-wrap,
+.column-fax .field-wrap,
+.column-email .field-wrap,
+.column-company .field-wrap,
+.column-department .field-wrap,
+.column-title .field-wrap,
+.column-companyEnglish .field-wrap,
+.column-website .field-wrap,
+.column-postalCode .field-wrap {
+  min-width: 176px !important;
+  width: 176px !important;
+}
+
+.column-mobile input,
+.column-phone input,
+.column-fax input,
+.column-email input,
+.column-company input,
+.column-department input,
+.column-title input,
+.column-companyEnglish input,
+.column-website input,
+.column-postalCode input {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+/* 地址欄大幅加寬 */
+.column-address {
+  min-width: 520px !important;
+  width: 520px !important;
+  max-width: 520px !important;
+}
+
+.column-address .field-wrap {
+  min-width: 506px !important;
+  width: 506px !important;
+}
+
+.column-address input,
+.column-address textarea {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+/* 原始辨識文字維持寬欄 */
+.column-rawText {
+  min-width: 360px !important;
+  width: 360px !important;
+}
+
+.column-rawText .field-wrap {
+  min-width: 346px !important;
+}
