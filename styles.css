@@ -179,7 +179,7 @@ td:last-child .delete-row {
 }
 
 /* 小貓掌鼠標 */
-@media (pointer: fine) {
+@media (any-pointer: fine) {
   body,
   a,
   button,
@@ -246,7 +246,7 @@ td:last-child .delete-row {
   }
 }
 
-@media (pointer: coarse) {
+@media (hover: none) and (any-pointer: coarse) {
   .cat-cursor { display: none; }
 }
 
@@ -429,51 +429,84 @@ thead .column-filename, thead .column-name { z-index:7; background:var(--soft); 
 }
 
 
-/* v4.3.7 肉球游標修復 */
-.cat-cursor {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 99999;
-  pointer-events: none;
-  opacity: 0;
-  font-size: 24px;
-  line-height: 1;
-  transform: translate(-50%, -50%) scale(1);
-  transition: opacity 0.12s ease, transform 0.12s ease;
-  will-change: left, top, transform;
+/* v4.3.8 穩定桌機表格欄寬 */
+.results-table {
+  width: max-content;
+  min-width: 100%;
+  table-layout: auto;
 }
 
-.cat-cursor.visible {
-  opacity: 1;
-}
-
-.cat-cursor.active {
-  transform: translate(-50%, -50%) scale(1.18);
-}
-
-/* Mail 欄位稍微加寬 */
 .column-email {
-  min-width: 240px;
-  width: 240px;
+  min-width: 250px;
+  width: 250px;
 }
 
-.column-email input,
-.column-email textarea {
-  min-width: 205px;
+.column-email .field-wrap {
+  min-width: 225px;
 }
 
-.results-table td:has(input[data-field="email"]),
-.results-table td:has(input[name="email"]),
-.results-table td:has(textarea[data-field="email"]),
-.results-table td:has(textarea[name="email"]) {
-  min-width: 240px;
-  width: 240px;
+.column-company {
+  min-width: 210px;
+  width: 210px;
 }
 
-.results-table input[data-field="email"],
-.results-table input[name="email"],
-.results-table textarea[data-field="email"],
-.results-table textarea[name="email"] {
-  min-width: 205px;
+.column-department {
+  min-width: 160px;
+  width: 160px;
+}
+
+.column-title {
+  min-width: 160px;
+  width: 160px;
+}
+
+.column-companyEnglish {
+  min-width: 230px;
+  width: 230px;
+}
+
+.column-website {
+  min-width: 220px;
+  width: 220px;
+}
+
+.column-postalCode {
+  min-width: 115px;
+  width: 115px;
+}
+
+.column-address {
+  min-width: 380px;
+  width: 380px;
+}
+
+.column-address .field-wrap {
+  min-width: 350px;
+}
+
+.column-rawText {
+  min-width: 330px;
+  width: 330px;
+}
+
+.column-actions {
+  min-width: 150px;
+  width: 150px;
+}
+
+/* v4.3.8 明確顯示目前編輯列 */
+.results-table tbody tr.editing-row td,
+.results-table tbody tr.editing-row input,
+.results-table tbody tr.editing-row textarea {
+  background: #F3DDD5 !important;
+}
+
+.results-table tbody tr.editing-row td {
+  border-top: 1px solid #DFC2B7 !important;
+  border-bottom: 1px solid #DFC2B7 !important;
+}
+
+.results-table tbody tr.editing-row .copy-field {
+  background: #FFF7F3 !important;
+  border-color: #DDBCAF !important;
 }
