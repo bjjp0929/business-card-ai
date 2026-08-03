@@ -909,3 +909,43 @@ if (catCursor && window.matchMedia("(pointer: fine)").matches) {
 applyLanguage(currentUiLanguage);
 
 renderTable();
+
+
+// v4.3.7 肉球游標保險初始化
+(function restoreCatCursor() {
+  let catCursor = document.querySelector(".cat-cursor");
+
+  if (!catCursor) {
+    catCursor = document.createElement("div");
+    catCursor.className = "cat-cursor";
+    catCursor.setAttribute("aria-hidden", "true");
+    catCursor.textContent = "🐾";
+    document.body.appendChild(catCursor);
+  }
+
+  document.addEventListener("mousemove", (event) => {
+    catCursor.style.left = `${event.clientX}px`;
+    catCursor.style.top = `${event.clientY}px`;
+    catCursor.classList.add("visible");
+  });
+
+  document.addEventListener("mouseleave", () => {
+    catCursor.classList.remove("visible");
+  });
+
+  document.addEventListener("mouseenter", () => {
+    catCursor.classList.add("visible");
+  });
+
+  document.addEventListener("mouseover", (event) => {
+    const textField = event.target.closest("input, textarea");
+    const interactiveElement = event.target.closest(
+      "a, button, select, label, .dropzone"
+    );
+
+    catCursor.classList.toggle(
+      "active",
+      Boolean(interactiveElement) && !textField
+    );
+  });
+})();

@@ -427,3 +427,53 @@ thead .column-filename, thead .column-name { z-index:7; background:var(--soft); 
 .results-table tbody tr.editing-row .column-name {
   background: #F3DDD5 !important;
 }
+
+
+/* v4.3.7 肉球游標修復 */
+.cat-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 99999;
+  pointer-events: none;
+  opacity: 0;
+  font-size: 24px;
+  line-height: 1;
+  transform: translate(-50%, -50%) scale(1);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  will-change: left, top, transform;
+}
+
+.cat-cursor.visible {
+  opacity: 1;
+}
+
+.cat-cursor.active {
+  transform: translate(-50%, -50%) scale(1.18);
+}
+
+/* Mail 欄位稍微加寬 */
+.column-email {
+  min-width: 240px;
+  width: 240px;
+}
+
+.column-email input,
+.column-email textarea {
+  min-width: 205px;
+}
+
+.results-table td:has(input[data-field="email"]),
+.results-table td:has(input[name="email"]),
+.results-table td:has(textarea[data-field="email"]),
+.results-table td:has(textarea[name="email"]) {
+  min-width: 240px;
+  width: 240px;
+}
+
+.results-table input[data-field="email"],
+.results-table input[name="email"],
+.results-table textarea[data-field="email"],
+.results-table textarea[name="email"] {
+  min-width: 205px;
+}
